@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spirit Beasts Quiz</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f0f0;
+    }
+    .page {
+      display: none;
+      padding: 40px;
+      text-align: center;
+    }
+    .active {
+      display: block;
+    }
+    button {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      display: block;
+      width: fit-content;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    img {
+      max-width: 300px;
+      margin: 20px 0;
+      border-radius: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="cover" class="page active">
+    <h1>Spirit Beasts Quiz</h1>
+    <p>Your Spirit Beasts Today</p>
+    <button onclick="goToPage('intro')">Start</button>
+  </div>
+
+  <div id="intro" class="page">
+    <h2>Introduction</h2>
+    <p>Based on your choices, we'll reveal which Spirit Beast you are. Are you ready?</p>
+    <p>This is just a version of Grey Box, and I'll be adding more questions and more effects like sound effects, motion effects, etc. in the future. And of course, it will make the test more accurate.</p>
+    <button onclick="goToPage('questions')">Continue</button>
+  </div>
+
+  <div id="questions" class="page"></div>
+
+  <div id="result" class="page">
+    <h2>Your Spirit Beast is:</h2>
+    <img id="resultImage" src="" alt="Result Image">
+    <h3 id="resultTitle"></h3>
+    <p id="resultDesc"></p>
+    <button onclick="restartQuiz()">Try Again</button>
+  </div>
+
+  <script>
+    const scores = {
+      croco: 0, tung: 0, banana: 0,
+      tralala: 0, patapim: 0, lirila: 0, trippi: 0
+    };
+
+    const resultData = {
+      croco: {
+        title: "Bombardiro Crocodilo",
+        image: "Bombardiro Crocodilo.jpg",
+        desc: "You go hard… until you crash. Deadlines are your personal warzone."
+      },
+      tung: {
+        title: "Tung Tung Tung sahur",
+        image: "Tung Tung Tung sahur.jpg",
+        desc: "Midnight scroller with mysterious thoughts. Are you okay? No. Will you sleep? Also no."
+      },
+      banana: {
+        title: "Chimpanzini Bananini",
+        image: "Chimpanzini Bananini.jpg",
+        desc: "You romanticize life… and then ignore it completely."
+      },
+      tralala: {
+        title: "Tralalero Tralala",
+        image: "Tralalero Tralala.jpg",
+        desc: "You have chaotic good energy and live by vibes and memes."
+      },
+      patapim: {
+        title: "Brr brr Patapim",
+        image: "Brr brr Patapim.jpg",
+        desc: "Old memories haunt you. But you’re oddly chill about it."
+      },
+      lirila: {
+        title: "Lirilì Larlà",
+        image: "Lirilì Larilà.jpg",
+        desc: "Mysterious desert wisdom. You're slow, strange, and oddly poetic."
+      },
+      trippi: {
+        title: "Trippi Troppi",
+        image: "Trippi Troppi.jpg",
+        desc: "You are the shrimp-cat hybrid of distracted genius. Internet is your playground."
+      }
+    };
+
+    const questions = [
+      {
+        text: "What was the last thing that made you mentally collapse out of nowhere?",
+        options: [
+          { text: "Someone stared at you and said: 'You can finish this tonight, right?'", type: 'croco' },
+          { text: "A stranger Airdropped you a selfie on the subway", type: 'tralala' },
+          { text: "You wrote 20 tasks in your to-do list, but only checked off 'wake up'", type: 'banana' },
+          { text: "Your roommate whispered in the kitchen: 'I’m screwed…'", type: 'tung' },
+          { text: "You remembered that pencil case you lost as a kid", type: 'patapim' }
+        ]
+      },
+      {
+        text: "What’s your chair’s name?",
+        options: [
+          { text: "I talk to it but it has no name", type: 'lirila' },
+          { text: "PAIN CONTAINER", type: 'croco' },
+          { text: "Stinky Baby / Little Angel", type: 'tung' },
+          { text: "Harvard Deluxe Model Rider X", type: 'tralala' },
+          { text: "It never talks back. But it listens.", type: 'banana' }
+        ]
+      },
+      {
+        text: "Which sound completely destroys your mental stability?",
+        options: [
+          { text: "Computer fan going full jet engine", type: 'croco' },
+          { text: "Phone buzzing with 7 notifications", type: 'tung' },
+          { text: "Roommate playing Just Dance at 2AM", type: 'tralala' },
+          { text: "Someone saying 'This isn’t your business'", type: 'banana' },
+          { text: "Your own breathing in silence", type: 'patapim' }
+        ]
+      },
+      {
+        text: "Which drink best describes your current state?",
+        options: [
+          { text: "Forgotten energy drink", type: 'croco' },
+          { text: "Milk tea from 2 days ago", type: 'banana' },
+          { text: "Green juice that’s too healthy", type: 'lirila' },
+          { text: "Wrong-ratio sugar bomb latte", type: 'tung' },
+          { text: "Coffee that became tears", type: 'trippi' }
+        ]
+      },
+      {
+        text: "What’s running through your mind in bed?",
+        options: [
+          { text: "Should I restart my life?", type: 'patapim' },
+          { text: "Was I fake-smiling in that IG post?", type: 'tralala' },
+          { text: "Still haunted by high school moments", type: 'banana' },
+          { text: "Can I finish this project in one go?", type: 'croco' },
+          { text: "20 mental tabs open, no thoughts", type: 'tung' }
+        ]
+      },
+      {
+        text: "What does your brain feel like right now?",
+        options: [
+          { text: "Exploded kitchen", type: 'tung' },
+          { text: "Stationery store of sticky notes", type: 'banana' },
+          { text: "Office with yelling manager", type: 'croco' },
+          { text: "Room full of meme posters", type: 'tralala' },
+          { text: "Too quiet. Too windy. Too light.", type: 'lirila' }
+        ]
+      },
+      {
+        text: "Why do you open your phone?",
+        options: [
+          { text: "One text → TikTok for 30 min", type: 'tung' },
+          { text: "Just to check time… now 15 apps deep", type: 'banana' },
+          { text: "Instagram → someone else's life", type: 'trippi' },
+          { text: "Trying to research → ordered food", type: 'lirila' },
+          { text: "Open then instantly want to yeet it", type: 'patapim' }
+        ]
+      },
+      {
+        text: "Which line hits a little too hard?",
+        options: [
+          { text: "I haven’t started yet…", type: 'tung' },
+          { text: "I think I’m okay… right?", type: 'banana' },
+          { text: "Am I just bad at life?", type: 'croco' },
+          { text: "I might be comic relief.", type: 'tralala' },
+          { text: "It’s fine. It’ll pass.", type: 'lirila' }
+        ]
+      }
+    ];
+
+    let currentIndex = 0;
+
+    function goToPage(pageId) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(pageId).classList.add('active');
+      if (pageId === 'questions') renderQuestion();
+    }
+
+    function renderQuestion() {
+      if (currentIndex >= questions.length) return showResult();
+      const q = questions[currentIndex];
+      const qDiv = document.getElementById('questions');
+      qDiv.innerHTML = `
+        <h2>Q${currentIndex + 1}</h2>
+        <p>${q.text}</p>
+        ${q.options.map(o => `<button onclick="selectAnswer('${o.type}')">${o.text}</button>`).join('')}
+      `;
+    }
+
+    function selectAnswer(type) {
+      scores[type]++;
+      currentIndex++;
+      renderQuestion();
+    }
+
+    function showResult() {
+      let result = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+      let data = resultData[result];
+      document.getElementById('resultImage').src = data.image;
+      document.getElementById('resultTitle').innerText = data.title;
+      document.getElementById('resultDesc').innerText = data.desc;
+      goToPage('result');
+    }
+
+    function restartQuiz() {
+      for (let key in scores) scores[key] = 0;
+      currentIndex = 0;
+      goToPage('questions');
+    }
+  </script>
+
+</body>
+</html>
